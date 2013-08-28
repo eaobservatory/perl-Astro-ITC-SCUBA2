@@ -15,6 +15,7 @@ my $build = new Module::Build(
     requires       => \%require,
     build_requires => {
                        'Test::More' => 0,
+                       'Test::Number::Delta' => 0,
                       },
 );
 
