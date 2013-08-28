@@ -4,9 +4,13 @@ Astro::ITC::SCUBA2 - SCUBA-2 Integration Time Calculator
 
 =head1 SYNOPSIS
 
-    use Astro::ITC::SCUBA2;
+    use Astro::ITC::SCUBA2 qw/@obsmodes %obstypes calctime calcrms/;
 
 =head1 DESCRIPTION
+
+This module contains SCUBA-2 integration time calculation
+functions extracted from the online SCUBA-2 integration time
+calculator.
 
 =cut
 
@@ -14,9 +18,116 @@ package Astro::ITC::SCUBA2;
 
 use strict;
 
+use base 'Exporter';
+
 our $VERSION = 0.01;
 
+our @EXPORT_OK = qw/@obsmodes %obstypes calctime calcrms/;
+
+=head1 DATA
+
+=over 4
+
+=item @obsmodes
+
+A list of supported SCUBA-2 observing modes, which
+are the keys of the L<%obstypes> hash.
+
+=cut
+
+our @obsmodes = ( 'Daisy', 'Pong900', 'Pong1800', 'Pong3600', 'Pong7200' );
+
+=item %obstypes
+
+Observing parameters: timing parameters are for an equation like
+
+    T_elapse[sec] = [ (tA/transmission + tB) / rms[mJy/beam] ]**2
+
+Each entry is another hash containing:
+
+    help:         description of the mode
+    tA850, tB850: timing parameters for 850um calculations
+    tA450, tA450: timing parameters for 450um calculations
+
+=cut
+
+our %obstypes;
+foreach my $obstype ( @obsmodes ) {
+
+   my %ref;
+   $ref{name}  = $obstype;
+
+   if ( $obstype eq 'Daisy' ) {
+     $ref{help}  = 'Daisy: ~3 arcmin map';
+     $ref{tA850} =  189; $ref{tB850} =  -48;
+     $ref{tA450} =  689; $ref{tB450} = -118;
+   } elsif ( $obstype eq 'Pong900' ) {
+     $ref{help}  = 'Pong900: 15 arcmin map',
+     $ref{tA850} =  407; $ref{tB850} = -104;
+     $ref{tA450} = 1483; $ref{tB450} = -254;
+   } elsif ( $obstype eq 'Pong1800' ) {
+     $ref{help}  = 'Pong1800: 30 arcmin map';
+     $ref{tA850} =  795; $ref{tB850} = -203;
+     $ref{tA450} = 2904; $ref{tB450} = -497;
+   } elsif ( $obstype eq 'Pong3600' ) {
+     $ref{help}  = 'Pong3600: 1 degree map';
+     $ref{tA850} = 1675; $ref{tB850} = -428;
+     $ref{tA450} = 6317; $ref{tB450} = -1082;
+   } elsif ( $obstype eq 'Pong7200' ) {
+     $ref{help}  = 'Pong7200: 2 degree map';
+     $ref{tA850} = 3354; $ref{tB850} = -857;
+     $ref{tA450} = 12837; $ref{tB450} = -2200;
+   }
+
+   $obstypes{$obstype} = \%ref;
+}
+
+=back
+
+=head1 SUBROUTINES
+
+=over 4
+
+=item calctime
+
+Calculate the observing time. Parameters are observing type, wavelength
+(450/850), transmission, factor, target rms (mJy/beam).
+
+=cut
+
+sub calctime {
+
+  my ( $obstype, $flt, $trans, $factor, $rms ) = @_;
+
+  my $tA = $obstypes{$obstype}->{"tA$flt"};
+  my $tB = $obstypes{$obstype}->{"tB$flt"};
+  my $sqrttime = ( $tA/$trans+$tB ) / $rms;
+
+  return( $sqrttime*$sqrttime / $factor );
+}
+
+=item calcrms
+
+Calculate the rms. Parameters are observing type, wavelength
+(450/850), transmission, factor, observing time.
+
+=cut
+
+sub calcrms {
+
+  my ( $obstype, $flt, $trans, $factor, $time ) = @_;
+
+  my $tA = $obstypes{$obstype}->{"tA$flt"};
+  my $tB = $obstypes{$obstype}->{"tB$flt"};
+
+  my $rms = ( $tA/$trans+$tB ) / sqrt($factor*$time);
+
+  return( $rms );
+}
+
 1;
+
+=back
 
 =head1 AUTHOR
 
