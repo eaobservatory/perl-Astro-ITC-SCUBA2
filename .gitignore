@@ -3,4 +3,5 @@
 /blib
 /_build
 /*META.*
+!META.json
 /*.tar.gz

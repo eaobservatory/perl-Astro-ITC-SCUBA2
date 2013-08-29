@@ -1,0 +1,43 @@
+{
+   "abstract" : "SCUBA-2 Integration Time Calculator",
+   "author" : [
+      "Remo Tilanus <rtilanus@jach.hawaii.edu>",
+      "Graham Bell <g.bell@jach.hawaii.edu>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.120921",
+   "license" : [
+      "open_source"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Astro-ITC-SCUBA2",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::More" : "0",
+            "Test::Number::Delta" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.40"
+         }
+      }
+   },
+   "provides" : {
+      "Astro::ITC::SCUBA2" : {
+         "file" : "lib/Astro/ITC/SCUBA2.pm",
+         "version" : "0.01"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://www.gnu.org/licenses/gpl-3.0.txt"
+      ]
+   },
+   "version" : "0.01"
+}
