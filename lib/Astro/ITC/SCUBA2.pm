@@ -22,7 +22,8 @@ use base 'Exporter';
 
 our $VERSION = 0.01;
 
-our @EXPORT_OK = qw/@obsmodes %obstypes calctime calcrms/;
+our @EXPORT_OK = qw/@obsmodes %obstypes calctime calcrms
+                    exposure_time_fraction/;
 
 =head1 DATA
 
@@ -48,6 +49,14 @@ Each entry is another hash containing:
     help:         description of the mode
     tA850, tB850: timing parameters for 850um calculations
     tA450, tA450: timing parameters for 450um calculations
+    c850, c450:   exposure time fraction of elapsed time
+
+Where c is defined as:
+
+    T_exposure = c * T_elapse
+
+Note that the tA and tB values include c so this data structure
+would probably be better not containing both as a function of mode.
 
 =cut
 
@@ -61,22 +70,27 @@ foreach my $obstype ( @obsmodes ) {
      $ref{help}  = 'Daisy: ~3 arcmin map';
      $ref{tA850} =  189; $ref{tB850} =  -48;
      $ref{tA450} =  689; $ref{tB450} = -118;
+     $ref{c850}  = 0.248312; $ref{c450} = 0.062124;
    } elsif ( $obstype eq 'Pong900' ) {
      $ref{help}  = 'Pong900: 15 arcmin map',
      $ref{tA850} =  407; $ref{tB850} = -104;
      $ref{tA450} = 1483; $ref{tB450} = -254;
+     $ref{c850}  = 0.053870; $ref{c450} = 0.013420;
    } elsif ( $obstype eq 'Pong1800' ) {
      $ref{help}  = 'Pong1800: 30 arcmin map';
      $ref{tA850} =  795; $ref{tB850} = -203;
      $ref{tA450} = 2904; $ref{tB450} = -497;
+     $ref{c850}  = 0.014113; $ref{c450} = 0.003500;
    } elsif ( $obstype eq 'Pong3600' ) {
      $ref{help}  = 'Pong3600: 1 degree map';
      $ref{tA850} = 1675; $ref{tB850} = -428;
      $ref{tA450} = 6317; $ref{tB450} = -1082;
+     $ref{c850}  = 0.003180; $ref{c450} = 0.000550;
    } elsif ( $obstype eq 'Pong7200' ) {
      $ref{help}  = 'Pong7200: 2 degree map';
      $ref{tA850} = 3354; $ref{tB850} = -857;
      $ref{tA450} = 12837; $ref{tB450} = -2200;
+     $ref{c850}  = 0.000794; $ref{c450} = 0.00017919;
    }
 
    $obstypes{$obstype} = \%ref;
@@ -123,6 +137,20 @@ sub calcrms {
   my $rms = ( $tA/$trans+$tB ) / sqrt($factor*$time);
 
   return( $rms );
+}
+
+=item exposure_time_fraction
+
+Returns the ratio, c, of the exposure time to the elapsed time.
+
+    T_exposure = c * T_elapse
+
+=cut
+
+sub exposure_time_fraction {
+  my ($obstype, $flt) = @_;
+
+  return $obstypes{$obstype}->{'c' . $flt};
 }
 
 1;

@@ -3,3 +3,6 @@ lib/Astro/ITC/SCUBA2.pm
 MANIFEST
 README
 t/1_compile.t
+t/calcrms.t
+t/calctime.t
+t/exposure_fraction.t
