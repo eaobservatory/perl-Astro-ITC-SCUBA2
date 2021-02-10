@@ -36,7 +36,7 @@ are the keys of the L<%obstypes> hash.
 
 =cut
 
-our @obsmodes = ( 'Daisy', 'Pong900', 'Pong1800', 'Pong3600', 'Pong7200' );
+our @obsmodes = ( 'Daisy', 'Pong900', 'Pong1800', 'Pong2700', 'Pong3600', 'Pong7200' );
 
 =item %obstypes
 
@@ -81,6 +81,13 @@ foreach my $obstype ( @obsmodes ) {
      $ref{tA850} =  795; $ref{tB850} = -203;
      $ref{tA450} = 2904; $ref{tB450} = -497;
      $ref{c850}  = 0.014113; $ref{c450} = 0.003500;
+
+   } elsif ( $obstype eq 'Pong2700' ) {
+     $ref{help}  = 'Pong1800: 45 arcmin map';
+     $ref{tA850} =  1174; $ref{tB850} = -300;
+     $ref{tA450} = 4143; $ref{tB450} = -709;
+     $ref{c850}  = 0.006479; $ref{c450} = 0.001722;
+
    } elsif ( $obstype eq 'Pong3600' ) {
      $ref{help}  = 'Pong3600: 1 degree map';
      $ref{tA850} = 1675; $ref{tB850} = -428;
